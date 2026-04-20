@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Member {
+  id        String   @id @default(cuid())
+  name      String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  paidExpenses    Expense[]              @relation("PaidBy")
+  splitExpenses   ExpenseParticipant[]
+  settlementsFrom Settlement[]           @relation("SettlementFrom")
+  settlementsTo   Settlement[]           @relation("SettlementTo")
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Int // cents
+  paidById    String
+  createdAt   DateTime @default(now())
+
+  paidBy       Member               @relation("PaidBy", fields: [paidById], references: [id])
+  participants ExpenseParticipant[]
+
+  @@index([paidById])
+  @@index([createdAt])
+}
+
+model ExpenseParticipant {
+  expenseId String
+  memberId  String
+
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  member  Member  @relation(fields: [memberId], references: [id])
+
+  @@id([expenseId, memberId])
+  @@index([memberId])
+}
+
+model Settlement {
+  id        String   @id @default(cuid())
+  fromId    String
+  toId      String
+  amount    Int // cents
+  createdAt DateTime @default(now())
+
+  from Member @relation("SettlementFrom", fields: [fromId], references: [id])
+  to   Member @relation("SettlementTo", fields: [toId], references: [id])
+
+  @@index([fromId])
+  @@index([toId])
+  @@index([createdAt])
+}
