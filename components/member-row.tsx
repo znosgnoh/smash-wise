@@ -20,7 +20,7 @@ export function MemberRow({
   const amt = balance?.amount ?? 0;
 
   const [, formAction, pending] = useActionState(
-    async (_prev: ActionResult): Promise<ActionResult> => {
+    async (): Promise<ActionResult> => {
       return removeMember({ memberId: member.id });
     },
     initialState,

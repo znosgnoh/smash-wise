@@ -12,6 +12,8 @@ export interface Expense {
   description: string;
   /** Amount in cents */
   amount: number;
+  /** Category: court, shuttle, food, other */
+  category: string;
   /** Member ID of the payer */
   paidBy: string;
   /** Member IDs of participants (includes payer if they participated) */

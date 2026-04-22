@@ -23,6 +23,7 @@ model Expense {
   id          String   @id @default(cuid())
   description String
   amount      Int // cents
+  category    String   @default("other")
   paidById    String
   createdAt   DateTime @default(now())
 
@@ -31,6 +32,7 @@ model Expense {
 
   @@index([paidById])
   @@index([createdAt])
+  @@index([category])
 }
 
 model ExpenseParticipant {

@@ -31,6 +31,7 @@ export async function addExpense(input: unknown): Promise<ActionResult> {
     data: {
       description: parsed.data.description,
       amount: parsed.data.amount,
+      category: parsed.data.category,
       paidById: parsed.data.paidBy,
       participants: {
         create: parsed.data.splitAmong.map((memberId) => ({ memberId })),

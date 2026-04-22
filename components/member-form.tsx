@@ -10,7 +10,7 @@ export function MemberForm(): React.ReactElement {
   const [name, setName] = useState("");
 
   const [state, formAction, pending] = useActionState(
-    async (_prev: ActionResult): Promise<ActionResult> => {
+    async (): Promise<ActionResult> => {
       if (!name.trim()) {
         return { success: false, error: "Name is required" };
       }

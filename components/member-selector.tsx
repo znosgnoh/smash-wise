@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import type { Member } from "@/lib/types";
 
 interface MemberSelectorProps {
@@ -59,10 +60,13 @@ export function MemberSelector({
         {activeMembers.map((member) => {
           const isSelected = selected.includes(member.id);
           return (
-            <button
+            <motion.button
               key={member.id}
               type="button"
               onClick={() => handleToggle(member.id)}
+              whileTap={{ scale: 0.93 }}
+              animate={isSelected ? { scale: [1, 1.08, 1] } : {}}
+              transition={{ duration: 0.2 }}
               className={`flex min-h-11 items-center gap-2 rounded-full px-3.5 py-2 text-sm font-medium transition-all ${
                 isSelected
                   ? "border border-cyan-500/50 bg-cyan-500/10 text-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.1)]"
@@ -78,7 +82,7 @@ export function MemberSelector({
               </span>
               {member.name}
               {isSelected && <span className="text-cyan-400">✓</span>}
-            </button>
+            </motion.button>
           );
         })}
       </div>

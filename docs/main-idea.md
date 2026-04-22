@@ -591,4 +591,42 @@ model Settlement {
 
 ---
 
-*Last updated: 2026-04-20*
+## 9. Implementation Progress
+
+### Completed (Phase 1 MVP)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Dashboard with member balances | ✅ Done | Balance summary, simplified debts, recent activity |
+| Add expense (amount, payer, split) | ✅ Done | Full form with mode toggle (expense/settle) |
+| Expense history list | ✅ Done | Grouped by month, merged expenses + settlements |
+| Equal split among selected members | ✅ Done | Live per-person calculation |
+| Admin: add/remove members | ✅ Done | Soft delete, balance display per member |
+| Settle up (record payment) | ✅ Done | Pre-fill from balance card "Settle" button |
+| Responsive mobile-first UI | ✅ Done | Bottom nav + FAB on mobile, top nav on desktop |
+| Dark mode, professional look | ✅ Done | `#0a0a0a` background, cyan/amber/purple accents |
+| Simplified balances | ✅ Done | Greedy debt simplification algorithm |
+| Framer Motion animations | ✅ Done | Staggered list items, FAB spring, member pill tap |
+| Delete expense | ✅ Done | Confirm-then-delete UI in history view |
+| Error boundaries | ✅ Done | `error.tsx` for all routes with retry button |
+| Loading skeletons | ✅ Done | `loading.tsx` for all routes (shimmer rectangles) |
+| Toast notifications | ✅ Done | Success/error toasts with auto-dismiss (3s) |
+| Confetti celebration | ✅ Done | Particle burst when all balances = $0 |
+| Database (Prisma/PostgreSQL) | ✅ Done | Full schema with relations and indexes |
+
+### Remaining (Phase 1 Polish)
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Pull to refresh (dashboard) | ✅ Done | Touch gesture on mobile, triggers router.refresh() |
+| Expense categories | ✅ Done | Court, shuttle, food, other — stored in DB, shown in form + cards |
+| Filter/search in history | ✅ Done | Category chips + text search, client-side filtering |
+
+### Tech Stack Deviation from Original Plan
+
+- **Storage:** Skipped Vercel Blob, went directly to Prisma/PostgreSQL
+- **IDs:** Using Prisma `cuid()` instead of `nanoid(12)` with prefixes
+
+---
+
+*Last updated: 2026-04-22*

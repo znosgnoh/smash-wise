@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { motion } from "motion/react";
 import { MemberAvatar } from "@/components/member-avatar";
 import { formatCurrency } from "@/lib/format";
 import type { BalanceTransaction, Member } from "@/lib/types";
@@ -6,11 +9,13 @@ import type { BalanceTransaction, Member } from "@/lib/types";
 interface BalanceCardProps {
   transaction: BalanceTransaction;
   members: Member[];
+  index?: number;
 }
 
 export function BalanceCard({
   transaction,
   members,
+  index = 0,
 }: BalanceCardProps): React.ReactElement {
   const fromMember = members.find((m) => m.id === transaction.from);
   const toMember = members.find((m) => m.id === transaction.to);
@@ -20,7 +25,12 @@ export function BalanceCard({
   const settleUrl = `/log?mode=settle&from=${transaction.from}&to=${transaction.to}&amount=${transaction.amount}`;
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/2 p-3 sm:p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05, ease: "easeOut" }}
+      className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/2 p-3 sm:p-4"
+    >
       <MemberAvatar name={fromMember.name} size="sm" />
       <div className="flex flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-1.5 text-sm text-zinc-100">
@@ -38,6 +48,6 @@ export function BalanceCard({
       >
         Settle
       </Link>
-    </div>
+    </motion.div>
   );
 }

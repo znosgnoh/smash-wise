@@ -15,6 +15,8 @@ import { BalanceSummaryCard } from "@/components/balance-summary-card";
 import { BalanceCard } from "@/components/balance-card";
 import { ExpenseCard } from "@/components/expense-card";
 import { EmptyState } from "@/components/empty-state";
+import { AnimatedFab } from "@/components/animated-fab";
+import { PullToRefresh } from "@/components/pull-to-refresh";
 
 export default async function DashboardPage(): Promise<React.ReactElement> {
   const [members, expenses, settlements] = await Promise.all([
@@ -57,6 +59,7 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
     .slice(0, 3);
 
   return (
+    <PullToRefresh>
     <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between lg:hidden">
@@ -78,11 +81,12 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
             Simplified Balances
           </h2>
           <div className="flex flex-col gap-2">
-            {transactions.map((t) => (
+            {transactions.map((t, i) => (
               <BalanceCard
                 key={`${t.from}-${t.to}`}
                 transaction={t}
                 members={members}
+                index={i}
               />
             ))}
           </div>
@@ -104,8 +108,8 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
             </Link>
           </div>
           <div className="flex flex-col gap-2">
-            {recentExpenses.map((e) => (
-              <ExpenseCard key={e.id} expense={e} members={members} />
+            {recentExpenses.map((e, i) => (
+              <ExpenseCard key={e.id} expense={e} members={members} index={i} />
             ))}
           </div>
         </section>
@@ -127,13 +131,8 @@ export default async function DashboardPage(): Promise<React.ReactElement> {
       )}
 
       {/* FAB */}
-      <Link
-        href="/log"
-        className="fixed bottom-20 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-cyan-500 text-2xl font-bold text-zinc-950 shadow-lg shadow-cyan-500/20 transition-transform hover:scale-105 active:scale-95 lg:hidden"
-        aria-label="Log expense"
-      >
-        +
-      </Link>
+      <AnimatedFab />
     </div>
+    </PullToRefresh>
   );
 }

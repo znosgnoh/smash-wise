@@ -5,7 +5,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { addExpense } from "@/lib/actions/expenses";
 import { settleUp } from "@/lib/actions/settlements";
 import { MemberSelector } from "@/components/member-selector";
+import { useToast } from "@/components/toast";
 import { dollarsToCents, formatCurrency } from "@/lib/format";
+import { EXPENSE_CATEGORIES } from "@/lib/constants";
+import type { ExpenseCategory } from "@/lib/constants";
 import type { Member, ActionResult } from "@/lib/types";
 
 interface ExpenseFormProps {
@@ -19,6 +22,7 @@ export function ExpenseForm({
 }: ExpenseFormProps): React.ReactElement {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { showToast } = useToast();
 
   const initialMode = searchParams.get("mode") === "settle" ? "settle" : "expense";
   const initialFrom = searchParams.get("from") ?? "";
@@ -30,6 +34,7 @@ export function ExpenseForm({
     initialAmount ? (Number(initialAmount) / 100).toFixed(2) : "",
   );
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<ExpenseCategory>("court");
   const [paidBy, setPaidBy] = useState<string[]>(
     initialFrom ? [initialFrom] : [],
   );
@@ -38,7 +43,7 @@ export function ExpenseForm({
   );
 
   const [state, formAction, pending] = useActionState(
-    async (_prev: ActionResult): Promise<ActionResult> => {
+    async (): Promise<ActionResult> => {
       const cents = dollarsToCents(amount);
       if (cents <= 0) {
         return { success: false, error: "Enter a valid amount" };
@@ -65,12 +70,16 @@ export function ExpenseForm({
         result = await addExpense({
           description: description.trim() || "Expense",
           amount: cents,
+          category,
           paidBy: paidBy[0],
           splitAmong,
         });
       }
 
       if (result.success) {
+        showToast(
+          mode === "settle" ? "Settlement recorded!" : "Expense logged!",
+        );
         router.push("/");
       }
       return result;
@@ -156,6 +165,32 @@ export function ExpenseForm({
             onChange={(e) => setDescription(e.target.value)}
             className="w-full rounded-xl border border-white/10 bg-white/2 px-4 py-3 text-sm text-zinc-100 outline-none placeholder:text-zinc-700 focus:border-cyan-500/50"
           />
+        </div>
+      )}
+
+      {/* Category (expense mode only) */}
+      {mode === "expense" && (
+        <div>
+          <label className="mb-2 block text-sm font-medium text-zinc-300">
+            Category
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {EXPENSE_CATEGORIES.map((cat) => (
+              <button
+                key={cat.value}
+                type="button"
+                onClick={() => setCategory(cat.value)}
+                className={`flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-medium transition-all ${
+                  category === cat.value
+                    ? "border border-cyan-500/50 bg-cyan-500/10 text-cyan-400"
+                    : "border border-white/10 bg-white/2 text-zinc-400 hover:border-white/20"
+                }`}
+              >
+                <span>{cat.icon}</span>
+                {cat.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

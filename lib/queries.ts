@@ -39,6 +39,7 @@ export async function getExpenses(): Promise<Expense[]> {
     id: r.id,
     description: r.description,
     amount: r.amount,
+    category: r.category,
     paidBy: r.paidById,
     splitAmong: r.participants.map((p) => p.memberId),
     createdAt: r.createdAt.toISOString(),

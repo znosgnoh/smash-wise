@@ -1,20 +1,30 @@
+"use client";
+
+import { motion } from "motion/react";
 import { formatCurrency, formatRelativeDate } from "@/lib/format";
 import type { Settlement, Member } from "@/lib/types";
 
 interface SettlementCardProps {
   settlement: Settlement;
   members: Member[];
+  index?: number;
 }
 
 export function SettlementCard({
   settlement,
   members,
+  index = 0,
 }: SettlementCardProps): React.ReactElement {
   const from = members.find((m) => m.id === settlement.fromId);
   const to = members.find((m) => m.id === settlement.toId);
 
   return (
-    <div className="flex items-start gap-3 rounded-xl border border-emerald-500/10 bg-emerald-500/2 p-3 sm:p-4">
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.05, ease: "easeOut" }}
+      className="flex items-start gap-3 rounded-xl border border-emerald-500/10 bg-emerald-500/2 p-3 sm:p-4"
+    >
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-500/10 text-lg">
         💰
       </div>
@@ -32,6 +42,6 @@ export function SettlementCard({
       <span className="shrink-0 font-mono text-sm font-semibold text-emerald-400">
         {formatCurrency(settlement.amount)}
       </span>
-    </div>
+    </motion.div>
   );
 }

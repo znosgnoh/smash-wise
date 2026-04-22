@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { BottomNav, TopNav } from "@/components/nav";
+import { ToastProvider } from "@/components/toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,11 +38,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col bg-[#0a0a0a] font-sans text-zinc-100">
-        <TopNav />
-        <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-20 pt-4 lg:pb-8 lg:pt-6">
-          {children}
-        </main>
-        <BottomNav />
+        <ToastProvider>
+          <TopNav />
+          <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col px-4 pb-20 pt-4 lg:pb-8 lg:pt-6">
+            {children}
+          </main>
+          <BottomNav />
+        </ToastProvider>
       </body>
     </html>
   );
