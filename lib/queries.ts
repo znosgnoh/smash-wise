@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@/lib/prisma";
-import type { Member, Expense, Settlement } from "@/lib/types";
+import type { Member, Expense, Settlement, ActivityLogEntry } from "@/lib/types";
 
 /** Fetch all members (active + inactive) */
 export async function getMembers(): Promise<Member[]> {
@@ -42,8 +42,32 @@ export async function getExpenses(): Promise<Expense[]> {
     category: r.category,
     paidBy: r.paidById,
     splitAmong: r.participants.map((p) => p.memberId),
+    splitAmounts: Object.fromEntries(
+      r.participants.map((p) => [p.memberId, p.amount]),
+    ),
     createdAt: r.createdAt.toISOString(),
   }));
+}
+
+/** Fetch a single expense by ID */
+export async function getExpense(id: string): Promise<Expense | null> {
+  const r = await prisma.expense.findUnique({
+    where: { id },
+    include: { participants: true },
+  });
+  if (!r) return null;
+  return {
+    id: r.id,
+    description: r.description,
+    amount: r.amount,
+    category: r.category,
+    paidBy: r.paidById,
+    splitAmong: r.participants.map((p) => p.memberId),
+    splitAmounts: Object.fromEntries(
+      r.participants.map((p) => [p.memberId, p.amount]),
+    ),
+    createdAt: r.createdAt.toISOString(),
+  };
 }
 
 /** Fetch all settlements */
@@ -56,6 +80,22 @@ export async function getSettlements(): Promise<Settlement[]> {
     fromId: r.fromId,
     toId: r.toId,
     amount: r.amount,
+    createdAt: r.createdAt.toISOString(),
+  }));
+}
+
+/** Fetch recent activity log entries */
+export async function getActivityLog(
+  limit = 50,
+): Promise<ActivityLogEntry[]> {
+  const rows = await prisma.activityLog.findMany({
+    orderBy: { createdAt: "desc" },
+    take: limit,
+  });
+  return rows.map((r) => ({
+    id: r.id,
+    action: r.action,
+    detail: r.detail,
     createdAt: r.createdAt.toISOString(),
   }));
 }

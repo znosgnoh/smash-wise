@@ -14,6 +14,7 @@ export const AddExpenseInputSchema = z.object({
   splitAmong: z
     .array(z.string().min(1))
     .min(1, "Select at least one member"),
+  splitAmounts: z.record(z.string(), z.number().int().nonnegative()).optional(),
 });
 
 export const SettleUpInputSchema = z
@@ -32,4 +33,21 @@ export const RemoveMemberInputSchema = z.object({
 
 export const DeleteExpenseInputSchema = z.object({
   expenseId: z.string().min(1),
+});
+
+export const EditExpenseInputSchema = z.object({
+  expenseId: z.string().min(1),
+  description: z.string().min(1, "Description is required").max(200).trim(),
+  amount: z.number().int().positive("Amount must be greater than 0"),
+  category: z.enum(["court", "shuttle", "food", "other"]).default("other"),
+  paidBy: z.string().min(1, "Payer is required"),
+  splitAmong: z
+    .array(z.string().min(1))
+    .min(1, "Select at least one member"),
+  splitAmounts: z.record(z.string(), z.number().int().nonnegative()).optional(),
+});
+
+export const SetupPinInputSchema = z.object({
+  memberId: z.string().min(1),
+  pin: z.string().regex(/^\d{4}$/, "PIN must be exactly 4 digits"),
 });

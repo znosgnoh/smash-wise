@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "motion/react";
 import { formatCurrency, formatRelativeDate } from "@/lib/format";
 import { DeleteExpenseButton } from "@/components/delete-expense-button";
@@ -48,7 +49,18 @@ export function ExpenseCard({
       <span className="shrink-0 font-mono text-sm font-semibold text-zinc-100">
         {formatCurrency(expense.amount)}
       </span>
-      {showDelete && <DeleteExpenseButton expenseId={expense.id} />}
+      {showDelete && (
+        <div className="flex shrink-0 gap-1">
+          <Link
+            href={`/log/${expense.id}`}
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-white/5 hover:text-zinc-300"
+            aria-label="Edit expense"
+          >
+            ✏️
+          </Link>
+          <DeleteExpenseButton expenseId={expense.id} />
+        </div>
+      )}
     </motion.div>
   );
 }

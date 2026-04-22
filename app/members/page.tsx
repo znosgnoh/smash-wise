@@ -9,12 +9,14 @@ import { computeNetBalances, toMemberBalances } from "@/lib/balance";
 import { MemberForm } from "@/components/member-form";
 import { MemberRow } from "@/components/member-row";
 import { EmptyState } from "@/components/empty-state";
+import { isAdmin } from "@/lib/session";
 
 export default async function MembersPage(): Promise<React.ReactElement> {
-  const [members, expenses, settlements] = await Promise.all([
+  const [members, expenses, settlements, admin] = await Promise.all([
     getMembers(),
     getExpenses(),
     getSettlements(),
+    isAdmin(),
   ]);
   const activeMembers = members.filter((m) => m.active);
 
@@ -34,7 +36,7 @@ export default async function MembersPage(): Promise<React.ReactElement> {
         </span>
       </div>
 
-      <MemberForm />
+      {admin && <MemberForm />}
 
       {activeMembers.length === 0 ? (
         <EmptyState
@@ -49,6 +51,7 @@ export default async function MembersPage(): Promise<React.ReactElement> {
               key={member.id}
               member={member}
               balance={memberBalances.find((b) => b.memberId === member.id)}
+              isAdmin={admin}
             />
           ))}
         </div>

@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut, useSession } from "next-auth/react";
 
 const tabs = [
   { href: "/", label: "Dashboard", icon: "📊" },
   { href: "/history", label: "History", icon: "📋" },
+  { href: "/activity", label: "Activity", icon: "📝" },
   { href: "/members", label: "Members", icon: "👥" },
 ] as const;
 
@@ -74,8 +76,26 @@ export function TopNav(): React.ReactElement {
           >
             Log Expense
           </Link>
+          <UserMenu />
         </div>
       </div>
     </nav>
+  );
+}
+
+function UserMenu(): React.ReactElement {
+  const { data: session } = useSession();
+  if (!session?.user) return <></>;
+
+  return (
+    <div className="flex items-center gap-3 border-l border-zinc-700 pl-4">
+      <span className="text-sm text-zinc-400">{session.user.name}</span>
+      <button
+        onClick={() => signOut({ callbackUrl: "/login" })}
+        className="text-xs text-zinc-500 transition-colors hover:text-red-400"
+      >
+        Sign out
+      </button>
+    </div>
   );
 }

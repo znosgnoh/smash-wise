@@ -18,6 +18,8 @@ export interface Expense {
   paidBy: string;
   /** Member IDs of participants (includes payer if they participated) */
   splitAmong: string[];
+  /** Per-participant amounts in cents, keyed by member ID */
+  splitAmounts: Record<string, number>;
   createdAt: string;
 }
 
@@ -51,3 +53,11 @@ export interface MemberBalance {
 export type ActionResult =
   | { success: true }
   | { success: false; error: string };
+
+/** An activity log entry */
+export interface ActivityLogEntry {
+  id: string;
+  action: string;
+  detail: string;
+  createdAt: string;
+}

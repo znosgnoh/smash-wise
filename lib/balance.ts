@@ -19,21 +19,16 @@ export function computeNetBalances(
   }
 
   for (const expense of expenses) {
-    const splitCount = expense.splitAmong.length;
-    const share = Math.floor(expense.amount / splitCount);
-    const remainder = expense.amount - share * splitCount;
-
     // Payer gets credited the full amount
     balances.set(
       expense.paidBy,
       (balances.get(expense.paidBy) ?? 0) + expense.amount,
     );
 
-    // Each participant gets debited their share
-    for (let i = 0; i < expense.splitAmong.length; i++) {
-      const id = expense.splitAmong[i];
-      const memberShare = share + (i < remainder ? 1 : 0);
-      balances.set(id, (balances.get(id) ?? 0) - memberShare);
+    // Each participant gets debited their stored share
+    for (const id of expense.splitAmong) {
+      const share = expense.splitAmounts[id] ?? 0;
+      balances.set(id, (balances.get(id) ?? 0) - share);
     }
   }
 

@@ -11,6 +11,8 @@ model Member {
   id        String   @id @default(cuid())
   name      String
   active    Boolean  @default(true)
+  pin       String?  // hashed 4-digit PIN for login
+  role      String   @default("member") // "admin" or "member"
   createdAt DateTime @default(now())
 
   paidExpenses    Expense[]              @relation("PaidBy")
@@ -38,6 +40,7 @@ model Expense {
 model ExpenseParticipant {
   expenseId String
   memberId  String
+  amount    Int    @default(0) // cents — each participant's share
 
   expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
   member  Member  @relation(fields: [memberId], references: [id])
@@ -58,5 +61,14 @@ model Settlement {
 
   @@index([fromId])
   @@index([toId])
+  @@index([createdAt])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String   // e.g. "expense.create", "expense.delete", "settlement.create", "member.add"
+  detail    String   // human-readable description
+  createdAt DateTime @default(now())
+
   @@index([createdAt])
 }

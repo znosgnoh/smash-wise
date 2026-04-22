@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { SettleUpInputSchema } from "@/lib/schemas";
+import { logActivity } from "@/lib/actions/activity";
 import type { ActionResult } from "@/lib/types";
 
 export async function settleUp(input: unknown): Promise<ActionResult> {
@@ -31,6 +32,11 @@ export async function settleUp(input: unknown): Promise<ActionResult> {
       amount: parsed.data.amount,
     },
   });
+
+  await logActivity(
+    "settlement.create",
+    `Settlement of $${(parsed.data.amount / 100).toFixed(2)} recorded`,
+  );
 
   revalidatePath("/");
   return { success: true };

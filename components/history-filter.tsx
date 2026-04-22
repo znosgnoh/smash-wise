@@ -15,6 +15,7 @@ interface HistoryFilterProps {
   expenses: Expense[];
   settlements: Settlement[];
   members: Member[];
+  isAdmin?: boolean;
 }
 
 const ALL_FILTER = "all";
@@ -24,6 +25,7 @@ export function HistoryFilter({
   expenses,
   settlements,
   members,
+  isAdmin: admin = false,
 }: HistoryFilterProps): React.ReactElement {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState(ALL_FILTER);
@@ -144,7 +146,7 @@ export function HistoryFilter({
                     expense={entry.data}
                     members={members}
                     index={i}
-                    showDelete
+                    showDelete={admin}
                   />
                 ) : (
                   <SettlementCard

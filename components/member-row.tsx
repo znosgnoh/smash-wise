@@ -9,6 +9,7 @@ import type { ActionResult, Member, MemberBalance } from "@/lib/types";
 interface MemberRowProps {
   member: Member;
   balance: MemberBalance | undefined;
+  isAdmin?: boolean;
 }
 
 const initialState: ActionResult = { success: true };
@@ -16,6 +17,7 @@ const initialState: ActionResult = { success: true };
 export function MemberRow({
   member,
   balance,
+  isAdmin: admin = false,
 }: MemberRowProps): React.ReactElement {
   const amt = balance?.amount ?? 0;
 
@@ -46,16 +48,18 @@ export function MemberRow({
           {formatCurrency(amt)}
         </span>
       </div>
-      <form action={formAction}>
-        <button
-          type="submit"
-          disabled={pending}
-          className="min-h-11 min-w-11 rounded-lg border border-white/10 px-2 py-1 text-xs text-zinc-500 transition-colors hover:border-red-500/30 hover:text-red-400 disabled:opacity-50"
-          aria-label={`Remove ${member.name}`}
-        >
-          {pending ? "…" : "Remove"}
-        </button>
-      </form>
+      {admin && (
+        <form action={formAction}>
+          <button
+            type="submit"
+            disabled={pending}
+            className="min-h-11 min-w-11 rounded-lg border border-white/10 px-2 py-1 text-xs text-zinc-500 transition-colors hover:border-red-500/30 hover:text-red-400 disabled:opacity-50"
+            aria-label={`Remove ${member.name}`}
+          >
+            {pending ? "…" : "Remove"}
+          </button>
+        </form>
+      )}
     </div>
   );
 }
